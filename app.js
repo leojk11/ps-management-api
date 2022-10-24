@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-// const mainRouter = require('./main-router/main-router');
+const mainRouter = require('./main-router/main-router');
 
 const mongo = require('./db/mongo');
 const connectToMongoDb = async() => {
@@ -35,7 +35,7 @@ app.use(
     express.json(),
     bodyParser.urlencoded({ extended: false }),
     bodyParser.json(),
-    // mainRouter,
+    mainRouter
 );
 
 // connect app to db and start it 
