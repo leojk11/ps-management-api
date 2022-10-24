@@ -43,7 +43,8 @@ exports.getSingle = (req, res) => {
 exports.addNew = (req, res) => {
     const data = { 
         ...req.body,
-        playing: false 
+        playing: false,
+        status: 'FREE'
     };
 
     if(data.name === '' || !data.name) {

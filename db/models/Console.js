@@ -20,7 +20,9 @@ const console = new Schema({
     games: {
         type: String
     },
-
+    status: {
+        type: String // FREE, BUSY, RESERVED
+    },
     playing: {
         type: Boolean,
         required: true
