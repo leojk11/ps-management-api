@@ -115,11 +115,12 @@ exports.edit = (req, res) => {
 
 exports.startPlaying = (req, res) => {
     const id = req.params.id;
+    const time = req.body.time;
 
     if (id) {
         Console.updateOne(
             { _id: id },
-            { playing: true }
+            { playing: true, start_time: time }
         )
         .then(() => {
             res.status(200).json({
@@ -145,7 +146,7 @@ exports.stopPlaying = (req, res) => {
     if (id) {
         Console.updateOne(
             { _id: id },
-            { playing: false }
+            { playing: false, start_time: null }
         )
         .then(() => {
             res.status(200).json({

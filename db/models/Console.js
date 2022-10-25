@@ -26,6 +26,10 @@ const console = new Schema({
     playing: {
         type: Boolean,
         required: true
+    },
+
+    start_time: {
+        type: Date // this will be used in order to calculate time difference
     }
 });
 
