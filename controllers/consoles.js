@@ -1,4 +1,5 @@
 const Console = require('../db/models/Console');
+const Revenue = require('../db/models/Revenue');
 
 exports.getAll = (req, res) => {
     Console.find()
@@ -142,6 +143,16 @@ exports.startPlaying = (req, res) => {
 
 exports.stopPlaying = (req, res) => {
     const id = req.params.id;
+    const data = { ...req.body };
+
+    console.log('data', data);
+
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.getUTCMonth() + 1;
+    const year = now.getFullYear();
+
+    console.log('separated date', `${ day }//${ month }//${ year }`);
 
     if (id) {
         Console.updateOne(
@@ -149,9 +160,25 @@ exports.stopPlaying = (req, res) => {
             { playing: false, start_time: null }
         )
         .then(() => {
-            res.status(200).json({
-                message: 'Stopped!'
-            });
+            Revenue.insertMany({
+                total_earning: data.price_to_pay,
+                console_id: id,
+                date: data.date,
+
+                day, month, year
+            })
+            .then(() => {
+                res.status(200).json({
+                    message: 'Stopped!'
+                });
+            })
+            .catch(error => {
+                console.log(error);
+                res.status(500).json({
+                    message: 'Internal server error!',
+                    error
+                });
+            })
         })
         .catch(error => {
             res.status(500).json({
