@@ -121,7 +121,7 @@ exports.startPlaying = (req, res) => {
     if (id) {
         Console.updateOne(
             { _id: id },
-            { playing: true, start_time: time }
+            { playing: true, start_time: time, status: 'BUSY' }
         )
         .then(() => {
             res.status(200).json({
@@ -157,7 +157,7 @@ exports.stopPlaying = (req, res) => {
     if (id) {
         Console.updateOne(
             { _id: id },
-            { playing: false, start_time: null }
+            { playing: false, start_time: null, status: 'FREE' }
         )
         .then(() => {
             Revenue.insertMany({

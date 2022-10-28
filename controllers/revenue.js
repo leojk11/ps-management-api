@@ -1,7 +1,19 @@
 const Revenue = require('../db/models/Revenue');
 
 exports.getAll = (req, res) => {
-    Revenue.find()
+    const filters = {};
+
+    if (req.query.day) {
+        filters['day'] = parseInt(req.query.day);
+    }
+    if (req.query.month) {
+        filters['month'] = parseInt(req.query.month);
+    }
+    if (req.query.year) {
+        filters['year'] = parseInt(req.query.year);
+    }
+
+    Revenue.find({ ...filters })
         .then(revenues => {
             res.status(200).send(revenues);
         })
