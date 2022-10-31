@@ -45,7 +45,9 @@ exports.addNew = (req, res) => {
     const data = { 
         ...req.body,
         playing: false,
-        status: 'FREE'
+        status: 'FREE',
+        overall_time_played: 0,
+        today_time_played: 0
     };
 
     if(data.name === '' || !data.name) {
@@ -152,40 +154,48 @@ exports.stopPlaying = (req, res) => {
     const month = now.getUTCMonth() + 1;
     const year = now.getFullYear();
 
-    console.log('separated date', `${ day }//${ month }//${ year }`);
-
     if (id) {
-        Console.updateOne(
-            { _id: id },
-            { playing: false, start_time: null, status: 'FREE' }
-        )
-        .then(() => {
-            Revenue.insertMany({
-                total_earning: data.price_to_pay,
-                console_id: id,
-                date: data.date,
+        Console.find({ _id: id })
+            .then(consoles => {
+                const calculatedTimePlayed = consoles[0].overall_time_played + data.time_played;
 
-                day, month, year
+                Console.updateOne(
+                    { _id: id },
+                    { 
+                        playing: false, 
+                        start_time: null, 
+                        status: 'FREE',
+                        overall_time_played: calculatedTimePlayed
+                    }
+                )
+                .then(() => {
+                    Revenue.insertMany({
+                        total_earning: data.price_to_pay,
+                        console_id: id,
+                        date: data.date,
+        
+                        day, month, year
+                    })
+                    .then(() => {
+                        res.status(200).json({
+                            message: 'Stopped!'
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        res.status(500).json({
+                            message: 'Internal server error!',
+                            error
+                        });
+                    })
+                })
+                .catch(error => {
+                    res.status(500).json({
+                        message: 'Internal server error!',
+                        error
+                    });
+                })
             })
-            .then(() => {
-                res.status(200).json({
-                    message: 'Stopped!'
-                });
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({
-                    message: 'Internal server error!',
-                    error
-                });
-            })
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: 'Internal server error!',
-                error
-            });
-        })
     } else {
         res.status(400).json({
             message: 'Id is missing!'

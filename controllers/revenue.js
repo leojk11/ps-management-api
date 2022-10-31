@@ -42,6 +42,7 @@ exports.getSingle = (req, res) => {
 
 exports.getTotalInfo = (req, res) => {
     const day = req.params.day;
+    const month = req.params.month;
     const year = req.params.year;
 
     Revenue.find({ year })
@@ -53,21 +54,43 @@ exports.getTotalInfo = (req, res) => {
                 }
             }
 
-            Revenue.find({ day })
-                .then(dRevenues => {
-                    let totalDRevenue = 0;
-                    for (const dRevenue of dRevenues) {
-                        if (dRevenue.total_earning) {
-                            totalDRevenue = totalDRevenue + dRevenue.total_earning;
+            Revenue.find({ month })
+                .then(mRevenues => {
+                    let totalMRevenue = 0;
+                    for (const mRevenue of mRevenues) {
+                        console.log('total_earning', mRevenue.total_earning);
+                        if (mRevenue.total_earning) {
+                            totalMRevenue = totalMRevenue + mRevenue.total_earning;
                         }
                     }
 
-                    res.status(200).json({
-                        yearly_earning: totalYRevenue,
-                        daily_earning: totalDRevenue
-                    })
+                    // console.log('mRevenues', mRevenues);
+
+                    Revenue.find({ day })
+                        .then(dRevenues => {
+                            let totalDRevenue = 0;
+                            for (const dRevenue of dRevenues) {
+                                if (dRevenue.total_earning) {
+                                    totalDRevenue = totalDRevenue + dRevenue.total_earning;
+                                }
+                            }
+        
+                            res.status(200).json({
+                                yearly_earning: totalYRevenue,
+                                monthly_earning: totalMRevenue,
+                                daily_earning: totalDRevenue
+                            })
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            res.status(500).json({
+                                message: 'Internal server error!',
+                                error
+                            });
+                        })
                 })
                 .catch(error => {
+                    console.log(error);
                     res.status(500).json({
                         message: 'Internal server error!',
                         error
@@ -75,6 +98,7 @@ exports.getTotalInfo = (req, res) => {
                 })
         })
         .catch(error => {
+            console.log(error);
             res.status(500).json({
                 message: 'Internal server error!',
                 error

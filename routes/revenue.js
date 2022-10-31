@@ -5,7 +5,7 @@ const revenue = require('../controllers/revenue');
 
 router.get('/', revenue.getAll);
 router.get('/:id', revenue.getSingle);
-router.get('/revenue/:day/:year', revenue.getTotalInfo);
+router.get('/revenue/:day/:month/:year', revenue.getTotalInfo);
 
 
 module.exports = router;
