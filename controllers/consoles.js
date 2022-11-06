@@ -147,12 +147,15 @@ exports.stopPlaying = (req, res) => {
     const id = req.params.id;
     const data = { ...req.body };
 
-    console.log('data', data);
-
     const now = new Date();
     const day = now.getDate();
     const month = now.getUTCMonth() + 1;
     const year = now.getFullYear();
+
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+
+    const time = `${ (hours < 10 ? '0' : '') + hours }:${ (minutes < 10 ? '0' : '') + minutes }`;
 
     if (id) {
         Console.find({ _id: id })
@@ -173,7 +176,7 @@ exports.stopPlaying = (req, res) => {
                         total_earning: data.price_to_pay,
                         console_id: id,
                         date: data.date,
-        
+                        time,
                         day, month, year
                     })
                     .then(() => {

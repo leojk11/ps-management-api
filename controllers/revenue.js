@@ -1,4 +1,5 @@
 const Revenue = require('../db/models/Revenue');
+const DrinkRevenue = require('../db/models/DrinkRevenue');
 
 exports.getAll = (req, res) => {
     const filters = {};
@@ -14,8 +15,17 @@ exports.getAll = (req, res) => {
     }
 
     Revenue.find({ ...filters })
+        .sort({ _id: -1 })
         .then(revenues => {
-            res.status(200).send(revenues);
+            const revenuesToSend = [];
+
+            for (const revenue of revenues) {
+                if (revenue.total_earning > 0) {
+                    revenuesToSend.push(revenue);
+                }
+            }
+
+            res.status(200).send(revenuesToSend);
         })
         .catch(error => {
             res.status(500).json({
@@ -58,15 +68,110 @@ exports.getTotalInfo = (req, res) => {
                 .then(mRevenues => {
                     let totalMRevenue = 0;
                     for (const mRevenue of mRevenues) {
-                        console.log('total_earning', mRevenue.total_earning);
                         if (mRevenue.total_earning) {
                             totalMRevenue = totalMRevenue + mRevenue.total_earning;
                         }
                     }
 
-                    // console.log('mRevenues', mRevenues);
-
                     Revenue.find({ day })
+                        .then(dRevenues => {
+                            let totalDRevenue = 0;
+                            for (const dRevenue of dRevenues) {
+                                if (dRevenue.total_earning) {
+                                    totalDRevenue = totalDRevenue + dRevenue.total_earning;
+                                }
+                            }
+        
+                            res.status(200).json({
+                                yearly_earning: totalYRevenue,
+                                monthly_earning: totalMRevenue,
+                                daily_earning: totalDRevenue
+                            })
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            res.status(500).json({
+                                message: 'Internal server error!',
+                                error
+                            });
+                        })
+                })
+                .catch(error => {
+                    console.log(error);
+                    res.status(500).json({
+                        message: 'Internal server error!',
+                        error
+                    });
+                })
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({
+                message: 'Internal server error!',
+                error
+            })
+        })
+}
+
+// drinks revenue
+exports.getAllDrinksRevenue = (req, res) => {
+    const filters = {};
+
+    if (req.query.day) {
+        filters['day'] = parseInt(req.query.day);
+    }
+    if (req.query.month) {
+        filters['month'] = parseInt(req.query.month);
+    }
+    if (req.query.year) {
+        filters['year'] = parseInt(req.query.year);
+    }
+
+    DrinkRevenue.find({ ...filters })
+        .sort({ _id: -1 })
+        .then(revenues => {
+            const revenuesToSend = [];
+
+            for (const revenue of revenues) {
+                if (revenue.total_earning > 0) {
+                    revenuesToSend.push(revenue);
+                }
+            }
+
+            res.status(200).send(revenuesToSend);
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: 'Internal server error!',
+                error
+            });
+        })
+}
+
+exports.getTotalDrinkRevenueInfo = (req, res) => {
+    const day = req.params.day;
+    const month = req.params.month;
+    const year = req.params.year;
+
+    DrinkRevenue.find({ year })
+        .then(yRevenues => {
+            let totalYRevenue = 0;
+            for (const yRevenue of yRevenues) {
+                if (yRevenue.total_earning) {
+                    totalYRevenue = totalYRevenue + yRevenue.total_earning;
+                }
+            }
+
+            DrinkRevenue.find({ month })
+                .then(mRevenues => {
+                    let totalMRevenue = 0;
+                    for (const mRevenue of mRevenues) {
+                        if (mRevenue.total_earning) {
+                            totalMRevenue = totalMRevenue + mRevenue.total_earning;
+                        }
+                    }
+
+                    DrinkRevenue.find({ day })
                         .then(dRevenues => {
                             let totalDRevenue = 0;
                             for (const dRevenue of dRevenues) {

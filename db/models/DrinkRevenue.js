@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const revenue = new Schema({
+const drinkRevenue = new Schema({
     total_earning: {
         type: Number
     },
 
-    console_id: {
+    drink_id: {
         type: String
     },
 
@@ -28,5 +28,5 @@ const revenue = new Schema({
     }
 });
 
-const Revenue = mongoose.model('Revenue', revenue);
-module.exports = Revenue;
+const DrinkRevenue = mongoose.model('DrinkRevenue', drinkRevenue);
+module.exports = DrinkRevenue;
