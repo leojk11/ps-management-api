@@ -226,3 +226,19 @@ exports.getTotalDrinkRevenueInfo = (req, res) => {
             })
         })
 }
+
+exports.delete = (req, res) => {
+    Revenue.deleteOne({  
+        _id: req.params.id
+    })
+    .then(() => {
+        res.status(200).json({
+            msg: 'deleted'
+        });
+    })
+    .catch(error => {
+        res.status(500).json({
+            msg: 'server error'
+        })
+    })
+}

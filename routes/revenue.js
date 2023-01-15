@@ -7,6 +7,8 @@ router.get('/', revenue.getAll);
 // router.get('/:id', revenue.getSingle);
 router.get('/revenue/:day/:month/:year', revenue.getTotalInfo);
 
+router.delete('/:id', revenue.delete)
+
 // drink revenues
 router.get('/drinks/all', revenue.getAllDrinksRevenue);
 router.get('/revenue/drink/:day/:month/:year', revenue.getTotalDrinkRevenueInfo);
