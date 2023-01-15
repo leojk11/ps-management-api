@@ -2,6 +2,7 @@ const Revenue = require('../db/models/Revenue');
 const DrinkRevenue = require('../db/models/DrinkRevenue');
 
 exports.getAll = (req, res) => {
+
     const filters = {};
 
     if (req.query.day) {
@@ -16,22 +17,37 @@ exports.getAll = (req, res) => {
 
     Revenue.find({ ...filters })
         .sort({ _id: -1 })
+        .limit(40)
         .then(revenues => {
-            const revenuesToSend = [];
-
-            for (const revenue of revenues) {
+          Revenue.find(filters)
+            .count()
+            .then(countRes => {
+              const revenuesToSend = [];
+  
+              for (const revenue of revenues) {
                 if (revenue.total_earning > 0) {
-                    revenuesToSend.push(revenue);
+                  revenuesToSend.push(revenue);
                 }
-            }
-
-            res.status(200).send(revenuesToSend);
-        })
-        .catch(error => {
-            res.status(500).json({
+              }
+  
+              // res.status(200).send(revenuesToSend);
+              res.status(200).json({
+                list: revenuesToSend,
+                total: countRes
+              });
+            })
+            .catch(error => {
+              res.status(500).json({
                 message: 'Internal server error!',
                 error
-            });
+              });
+            })
+        })
+        .catch(error => {
+          res.status(500).json({
+            message: 'Internal server error!',
+            error
+          });
         })
 }
 
