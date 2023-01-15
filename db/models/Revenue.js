@@ -9,6 +9,9 @@ const revenue = new Schema({
     console_id: {
         type: String
     },
+    user: {
+        type: String
+    },
 
     date: {
         type: String

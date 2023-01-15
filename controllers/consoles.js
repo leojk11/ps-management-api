@@ -177,7 +177,8 @@ exports.stopPlaying = (req, res) => {
                         console_id: id,
                         date: data.date,
                         time,
-                        day, month, year
+                        day, month, year,
+                        user: data.user
                     })
                     .then(() => {
                         res.status(200).json({
