@@ -1,4 +1,5 @@
 # ps-management-api
+- Api for application that managed store that contains PlayStation consoles and they are being put for rent.
 
 ## Console
 - id: string;
